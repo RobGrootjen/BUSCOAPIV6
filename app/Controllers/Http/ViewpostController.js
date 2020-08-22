@@ -1,4 +1,3 @@
-'use strict'
 
 const PostController = require("./PostController")
 const Report = use('App/Models/Report')
@@ -76,8 +75,6 @@ class ViewpostController {
     } 
 
     async getallposts({params, response, request}){
-
-        try{
         
         const pagedata = request.only(['foo']);
         const page = parseInt(pagedata.foo , 10);
@@ -97,9 +94,12 @@ class ViewpostController {
 
 
         for (let post of allposts) {
-
+            let location = post.location
+            if(post.user.location !== null){
+                location = post.user.location
+            }            
             let image = post.images[0]
-            let fpost = {username : post.user.username, location : post.location,
+            let fpost = {username : post.user.username, location : location,
                         avatar: post.user.avatar, postname : post.name,
                         image: image.url , type: post.type, category: post.category,
                         price : post.price, status: post.status, id: post.id, creado : post.created_at
@@ -112,13 +112,7 @@ class ViewpostController {
         return response.json({
             status: 'sure',
             data: data
-        })}catch(error){
-            console.log(error)
-            return response.status(400).json({
-                status :'wrong',
-                message : error
-            })
-        }
+        })
     }
 
     async find({request, response}){
@@ -397,3 +391,4 @@ class ViewpostController {
 }
 
 module.exports = ViewpostController
+
