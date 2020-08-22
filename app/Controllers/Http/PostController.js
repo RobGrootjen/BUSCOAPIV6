@@ -14,7 +14,7 @@ class PostController {
         if (banverify == null){
           let price = 0
           if(data.price !== null ){
-            pice = data.price
+            price = data.price
           }
           if(data.type == 'listado'){
           const rules = {
