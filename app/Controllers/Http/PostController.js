@@ -10,7 +10,9 @@ const Banlist = use('App/Models/Banlist')
 
 class PostController { 
     async post ({auth, request, response}){
-        const data = request.only(['text', 'name', 'images', 'location' , 'type', 'category', 'price', 'status'])
+      if(auth.current.user.location !== null){
+
+        const data = request.only(['text', 'name', 'images', 'type', 'category', 'price', 'status'])
         const banverify = await Banlist.findBy('user_id', auth.current.user.id)
         if (banverify == null){
           if(data.type == 'listado'){
@@ -18,10 +20,9 @@ class PostController {
               text: 'required|string|max:1500|min:50',
               name: 'required|string|min:10|max:150',
               images: 'required',
-              location : 'required|max:90|string',
               type: 'required|string|min:7|max:10',
               category: 'required|max:150',
-              price: 'required|max:100',
+              price: 'max:100',
               status : 'required|max:5'
           }
 
@@ -33,7 +34,6 @@ class PostController {
               'text.max':'El post no debe exceder los 1500 caracteres',
               'name.min': 'Nombre debe tener al menos 10 caracteres',
               'name.max': 'Nombre no puede tener más de 150 caracters',
-              'price.min' : 'El precio no debe exceder los 100 caracteres',
             }
 
             const validation = await validate(data, rules, messages)
@@ -51,7 +51,7 @@ class PostController {
                 post.user_id = auth.current.user.id
                 post.name = data.name
                 post.type = data.type
-                post.location = data.location
+                post.location = auth.current.user.location
                 post.price = data.price
                 post.category = data.category
                 post.text = data.text
@@ -82,7 +82,6 @@ class PostController {
                   text: 'required|string|max:1500|min:50',
                   name: 'required|string|min:10|max:150',
                   images: 'required',
-                  location : 'required|max:90|string',
                   type: 'required|string|min:7|max:10',
                   category: 'required|max:150'
               }
@@ -111,7 +110,7 @@ class PostController {
                     post.user_id = auth.current.user.id
                     post.name = data.name
                     post.type = data.type
-                    post.location = data.location
+                    post.location = auth.current.user.location
                     post.category = data.category
                     post.text = data.text
                     await post.save()
@@ -141,20 +140,17 @@ class PostController {
                   text: 'required|string|max:1500|min:50',
                   name: 'required|string|min:10|max:150',
                   images: 'required',
-                  location : 'required|max:90|string',
                   type: 'required|string|min:7|max:10',
-                  price: 'required|max:100'
+                  price: 'max:100'
               }
       
               const messages = {
                   required: 'Es necesario llenar todos los campos',
-                  'price.required' : 'si no deseas especificar el precio pon cero',
                   'images.required' : 'Necesitas subir al menos una imagen',
                   'text.min': 'El post debe tener al menos 50 catacteres',
                   'text.max':'El post no debe exceder los 1500 caracteres',
                   'name.min': 'Nombre debe tener al menos 10 caracteres',
                   'name.max': 'Nombre no puede tener más de 150 caracters',
-                  'price.min' : 'El precio no debe exceder los 100 caracteres',
                 }
       
                 const validation = await validate(data, rules, messages)
@@ -172,7 +168,7 @@ class PostController {
                     post.user_id = auth.current.user.id
                     post.name = data.name
                     post.type = data.type
-                    post.location = data.location
+                    post.location = auth.current.user.location
                     post.price = data.price
                     post.text = data.text
                     await post.save()
@@ -203,6 +199,7 @@ class PostController {
             message: 'Usuario baneado'
           })
         }
+      }
     }
 
     async postcv ({auth, request, response}){
@@ -254,3 +251,4 @@ class PostController {
 }
 
 module.exports = PostController
+
