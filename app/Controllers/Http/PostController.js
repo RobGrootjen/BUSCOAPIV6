@@ -204,12 +204,12 @@ class PostController {
 
     async postcv ({auth, request, response}){
       const data = request.only(['image'])
-      const banverify = await Banlist.findBy('user_id', auth.current.user.id)
+      const user = auth.current.user
+      const banverify = await Banlist.findBy('user_id', user.id)
       if(banverify == null){
         try { 
         const cv = await Curriculo.findBy('user_id', user.id)
-        if (cv== null){
-          const user = auth.current.user     
+        if (cv== null){     
           const ncv = await new Curriculo()
           ncv.user_id = user.id
           ncv.cvlink = data.image
