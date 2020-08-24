@@ -1,5 +1,6 @@
 'use strict'
 const User = use('App/Models/User')
+const Curriculo = use('App/Models/Curriculo')
 const { validate } = use('Validator')
 const Mail = use('Mail')
 const PasswordReset = use('App/Models/Resetpassword')
