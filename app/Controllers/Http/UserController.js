@@ -458,17 +458,6 @@ class UserController {
         }
 
     }
-  
-  async reset ({response}){
-  const cv = await Curriculo.findBy('user_id', 1)
-  await cv.delete()
-  const user = await User.findBy('id', 1)
-  await user.cv_id = null
-    await user.save()
-    return response.json({
-    data:'sure'
-    })
-  }
     
 }
 
