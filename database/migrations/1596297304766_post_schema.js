@@ -15,6 +15,7 @@ class PostSchema extends Schema {
       table.text('price',100)
       table.text('category', 40)
       table.text('status', 5)
+      table.text('currency', 8)
       table.timestamps()
     })
   }
