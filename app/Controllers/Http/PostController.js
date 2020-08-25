@@ -12,7 +12,7 @@ class PostController {
     async post ({auth, request, response}){
       if(auth.current.user.location !== null){
 
-        const data = request.only(['text', 'name', 'images', 'type', 'category', 'price', 'status'])
+        const data = request.only(['text', 'name', 'images', 'type', 'category', 'price', 'status', 'currency'])
         const banverify = await Banlist.findBy('user_id', auth.current.user.id)
         if (banverify == null){
           if(data.type == 'listado'){
@@ -23,7 +23,8 @@ class PostController {
               type: 'required|string|min:7|max:10',
               category: 'required|max:150',
               price: 'max:100',
-              status : 'required|max:5'
+              status : 'required|max:5',
+              currency : 'required|max:8'
           }
 
           const messages = {
@@ -56,6 +57,7 @@ class PostController {
                 post.category = data.category
                 post.text = data.text
                 post.status = data.status
+                post.currency = data.currency
                 await post.save()
                 
                 const posto = post.toJSON()
@@ -141,7 +143,8 @@ class PostController {
                   name: 'required|string|min:10|max:150',
                   images: 'required',
                   type: 'required|string|min:7|max:10',
-                  price: 'max:100'
+                  price: 'max:100',
+                  currency : 'required|max:8'
               }
       
               const messages = {
@@ -171,6 +174,7 @@ class PostController {
                     post.location = auth.current.user.location
                     post.price = data.price
                     post.text = data.text
+                    post.currency= data.currency
                     await post.save()
                     
                     const posto = post.toJSON()
