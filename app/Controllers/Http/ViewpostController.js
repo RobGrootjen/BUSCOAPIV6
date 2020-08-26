@@ -76,12 +76,13 @@ class ViewpostController {
 
     async getallposts({params, response, request}){
         
-        const pagedata = request.only(['foo']);
+        const pagedata = request.only(['foo', 'locate']);
         const page = parseInt(pagedata.foo , 10);
 
 
         const posts = await Post.query()
         .where('type', params.type)
+        .where('location', pagedata.locate)
         .with('user')
         .with('images')
         .orderBy('created_at', 'DESC')
