@@ -79,7 +79,9 @@ class ViewpostController {
         const pagedata = request.only(['foo', 'locate']);
         const page = parseInt(pagedata.foo , 10);
 
-
+      let post = undefined
+      
+      if(pagedata.locate !== ''){
         const posts = await Post.query()
         .where('type', params.type)
         .where('location', pagedata.locate)
@@ -87,6 +89,17 @@ class ViewpostController {
         .with('images')
         .orderBy('created_at', 'DESC')
         .paginate(page, 3)
+        } else{{
+ 
+        const posts = await Post.query()
+        .where('type', params.type)
+        .where('location', pagedata.locate)
+        .with('user')
+        .with('images')
+        .orderBy('created_at', 'DESC')
+        .paginate(page, 3)
+        
+        }
 
         
         const aposts = await posts.toJSON()
