@@ -79,6 +79,8 @@ class ViewpostController {
         const pagedata = request.only(['foo', 'locate']);
         const page = parseInt(pagedata.foo , 10);
       let posts= undefined
+      
+      
       if(pagedata.locate == 'global'){
         posts = await Post.query()
         .where('type', params.type)
@@ -87,7 +89,6 @@ class ViewpostController {
         .orderBy('created_at', 'DESC')
         .paginate(page, 3)
         } else{
- 
         posts = await Post.query()
         .where('type', params.type)
         .with('user')
