@@ -90,7 +90,6 @@ class ViewpostController {
  
         posts = await Post.query()
         .where('type', params.type)
-        .where('location', pagedata.locate)
         .with('user')
         .with('images')
         .orderBy('created_at', 'DESC')
