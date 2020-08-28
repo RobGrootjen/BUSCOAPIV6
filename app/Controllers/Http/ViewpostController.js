@@ -82,7 +82,7 @@ class ViewpostController {
       let post = undefined
       
       if(pagedata.locate == 'global'){
-        const posts = await Post.query()
+        posts = await Post.query()
         .where('type', params.type)
         .with('user')
         .with('images')
@@ -90,7 +90,7 @@ class ViewpostController {
         .paginate(page, 3)
         } else{{
  
-        const posts = await Post.query()
+        posts = await Post.query()
         .where('type', params.type)
         .where('location', pagedata.locate)
         .with('user')
