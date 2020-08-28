@@ -76,6 +76,7 @@ class ViewpostController {
 
     async getallposts({params, response, request}){
         
+      try{
         const pagedata = request.only(['foo', 'locate']);
         const page = parseInt(pagedata.foo , 10);
       let posts= undefined
@@ -123,7 +124,7 @@ class ViewpostController {
         return response.json({
             status: 'sure',
             data: data
-        })
+        })}catch(error){console.log(error)}
     }
 
     async find({request, response}){
