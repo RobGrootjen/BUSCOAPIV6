@@ -79,7 +79,7 @@ class ViewpostController {
         const pagedata = request.only(['foo', 'locate']);
         const page = parseInt(pagedata.foo , 10);
 
-      let post = undefined
+      let posts = undefined
       
       if(pagedata.locate == 'global'){
         posts = await Post.query()
