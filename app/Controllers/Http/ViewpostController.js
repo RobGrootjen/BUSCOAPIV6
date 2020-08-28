@@ -81,7 +81,7 @@ class ViewpostController {
 
       let post = undefined
       
-      if(pagedata.locate !== ''){
+      if(pagedata.locate == 'global'){
         const posts = await Post.query()
         .where('type', params.type)
         .where('location', pagedata.locate)
