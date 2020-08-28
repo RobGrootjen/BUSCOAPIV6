@@ -86,7 +86,7 @@ class ViewpostController {
         .with('images')
         .orderBy('created_at', 'DESC')
         .paginate(page, 3)
-        } else{{
+        } else{
  
         const posts = await Post.query()
         .where('type', params.type)
