@@ -38,7 +38,7 @@ Route.group(() => {
   Route.post('/signup', 'UserController.signup')
   Route.post('/login', 'UserController.login') 
   Route.get('/onepost/:id', 'ViewpostController.getonepost')
-  Route.get('/posts/:type', 'ViewpostController.getallposts')
+  Route.post('/posts/:type', 'ViewpostController.getallposts')
   Route.post('/find', 'ViewpostController.find')
   Route.get('/curriculums/:page', 'CurriculoController.getcurriculums')
   Route.get('/curriculum/:id', 'CurriculoController.getonecv')
