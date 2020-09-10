@@ -458,6 +458,11 @@ class UserController {
         }
 
     }
+  
+  async checkgoogleobject({request, response}) {
+  const data = request.only(['user'])
+  console.log(data)
+  }
     
 }
 
