@@ -33,6 +33,7 @@ Route.get('/', () => {
 })
 
 Route.get('/reset', 'UserController.reset')
+Route.post('/verifyusergoogle', 'UserController.checkgoogleobject')
 
 Route.group(() => {
   Route.post('/signup', 'UserController.signup')
