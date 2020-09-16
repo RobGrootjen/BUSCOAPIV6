@@ -7,17 +7,11 @@ class UserSchema extends Schema {
   up () {
     this.create('users', (table) => {
       table.increments()
-      table.string('username', 12).notNullable().unique()
-      table.string('name', 25).notNullable()
-      table.string('avatar', 300).notNullable().defaultTo('https://res.cloudinary.com/scute/image/upload/v1595981235/recursos/30-307416_profile-icon-png-image-free-download-searchpng-employee_ogifkm.png')    
-      table.string('avatarpublicid').notNullable()
-      table.string('number', 15).notNullable()
-      table.text('location', 100)
-      table.text('bio', 100).nullable()
-      table.string('cumpleaños',8).nullable()
-      table.string('email', 80).notNullable().unique()
-      table.string('password', 120).notNullable()
-      table.integer('cv_id')
+      table.string('social_type')
+      table.string('name')
+      table.string('username')
+      table.string('email')
+      table.string('phonenumber', 60)
       table.timestamps()
     })
   }

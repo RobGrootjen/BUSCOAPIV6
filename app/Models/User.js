@@ -28,14 +28,11 @@ class User extends Model {
   monedero () {
     return this.hasOne('App/Models/Monedero')
   }
-  posts () {
-    return this.hasMany('App/Models/Post')
-  }
   reports () {
     return this.hasMany('App/Models/Report')
   }
-  curriculo () {
-    return this.hasOne('App/Models/Curriculo')
+  profile (){
+    return this.hasOne('App/Moldels/Profile')
   }
 }
 
