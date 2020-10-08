@@ -41,7 +41,7 @@ Route.group(() => {
   Route.get('/me', 'UserController.me')
 })
 .prefix('api/v2')
-.middleware('auth')
+.middleware('detect')
 
 Route.group(()=>{
   Route.put('/changeavatar', 'UserController.updateProfilePic')
