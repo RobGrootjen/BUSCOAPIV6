@@ -4,6 +4,7 @@ const { validate } = use('Validator')
 const Cloudinary = use('Cloudinary')
 const Banlist = use('App/Models/Banlist')
 const axios = use('axios')
+const Token = use('App/Models/Token')
 
 class UserController {
 
@@ -61,10 +62,10 @@ class UserController {
             const registerverify = await Socialuser.findBy('social_type', data.type+usuario.id)
 
             if(registerverify !== null && usuario.response == true){
-                const banverify = await Banlist.findBy('social_type', data.type+usuario.id)
+                const banverify = await Banlist.findBy('user_id', registerverify.id)
                 if(banverify == null){
                     if(newtoken !== null){
-                        newtoken.session_user_id = data.type+usuario.id
+                        newtoken.user_id = registerverify.id
                         newtoken.session_type = data.type
                         newtoken.token = token
                         await newtoken.save()
@@ -75,8 +76,7 @@ class UserController {
                             user: registerverify
                         })
                     } else {
-                        newtoken = await new Token()
-                        newtoken.session_user_id = data.type+usuario.id
+                        newtoken.user_id = registerverify.id
                         newtoken.session_type = data.type
                         newtoken.token = token
                         await newtoken.save()
@@ -100,15 +100,14 @@ class UserController {
                      user.name = usuario.name
                      user.username = data.type+usuario.id
                      user.social_type = data.type+usuario.id
-                     user.isverifiedemail = true
                      await user.save()
  
                      newtoken = await new Token()
-                     newtoken.session_user_id = data.type+usuario.id
+                     newtoken.user_id = data.type+usuario.id
                      newtoken.session_type = data.type
                      newtoken.token = token
                      await newtoken.save()
-                     
+
                      return response.json({
                          status : 'sure',
                          token : newtoken.token,
@@ -127,7 +126,18 @@ class UserController {
 
 
 //Metodo "me"
-    async me ({ auth, response }) {
+    async me ({ request, response }) {
+        if(request.user.status !== '413'){
+            return response.json({
+                status: 'sure',
+                data : request.user.message,
+            })
+        } else {
+            return response.status(413).json({
+                status:'Unautorized',
+                message: request.user.message,
+            })
+        }
 
     }
 
