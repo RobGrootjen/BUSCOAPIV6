@@ -25,15 +25,6 @@ class User extends Model {
    *
    * @return {Object}
    */
-  monedero () {
-    return this.hasOne('App/Models/Monedero')
-  }
-  reports () {
-    return this.hasMany('App/Models/Report')
-  }
-  profile (){
-    return this.hasOne('App/Moldels/Profile')
-  }
   Token (){
     return this.hasOne('App/Models/Token')
   }
