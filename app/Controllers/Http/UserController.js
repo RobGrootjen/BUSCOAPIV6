@@ -97,7 +97,7 @@ class UserController {
                 }else{
                     switch(usuario.response){
                         case true:
-                         const user = await new Socialuser()
+                         const user = await new User()
                          user.name = usuario.name
                          user.username = data.type+usuario.id
                          user.social_type = data.type+usuario.id
