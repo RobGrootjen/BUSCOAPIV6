@@ -25,7 +25,7 @@ class UserController {
         const validation = await validate(data, rules, messages)
 
         if(validation.fails()){
-
+            console.log(error)
             const message = validation.messages()
             let error = message[0]
 
