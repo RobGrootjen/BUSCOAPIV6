@@ -9,118 +9,123 @@ const Token = use('App/Models/Token')
 class UserController {
 
     async login ({ request, response }) {
-        const data = request.only(['type','token'])
-
-        const rules = {
-            type: 'required|string',
-            token: 'string|required',
-        }
-
-        const messages = {
-            required: 'Porfavor, llena los campos correctamente',
-            string: 'Porfavor, llena los campos correctamente',
-            }
-
-
-        const validation = await validate(data, rules, messages)
-
-        if(validation.fails()){
-            console.log(error)
-            const message = validation.messages()
-            let error = message[0]
-
-            return response.status(400).json({
-                status: 'wrong',
-                message: error
-            })
-        } else {
-
-            let usuario = {response : false, email:'', name: '', username: '', token: '', id: ''}
-            
-            switch(data.type){
-                case 'go':
-                    await axios.get('https://www.googleapis.com/userinfo/v2/me', {
-                    headers: { Authorization: `Bearer ${data.token}` },
-                    }).then(response =>{
-                    usuario = {response : true, email:response.data.email != null ? response.data.email : 'Not email adress', 
-                        name: response.data.name, username: response.data.given_name, token : data.token, id:response.data.id}
-                    console.log(response)
-                    })
-                    break;
-                case 'fb':
-                    await axios.get(`https://graph.facebook.com/me?access_token=${data.token}`)
-                    .then(response =>{
-                    usuario = {response : true, email: response.data.email != null ? response.data.email : 'Not email adress',
-                    name: response.data.name, username: response.data.name, token : data.token, id:response.data.id}
-                    console.log(response)
-                    })
-                break;
-            }
-
-            const token = data.token
-            let newtoken = await Token.findBy('session_user_id', data.type+usuario.id)
-            const registerverify = await Socialuser.findBy('social_type', data.type+usuario.id)
-
-            if(registerverify !== null && usuario.response == true){
-                const banverify = await Banlist.findBy('user_id', registerverify.id)
-                if(banverify == null){
-                    if(newtoken !== null){
-                        newtoken.user_id = registerverify.id
-                        newtoken.session_type = data.type
-                        newtoken.token = token
-                        await newtoken.save()
+        try{
+            const data = request.only(['type','token'])
     
-                        return response.json({
-                            status : 'sure',
-                            token: newtoken.token,
-                            user: registerverify
+            const rules = {
+                type: 'required|string',
+                token: 'string|required',
+            }
+    
+            const messages = {
+                required: 'Porfavor, llena los campos correctamente',
+                string: 'Porfavor, llena los campos correctamente',
+                }
+    
+    
+            const validation = await validate(data, rules, messages)
+    
+            if(validation.fails()){
+                console.log(error)
+                const message = validation.messages()
+                let error = message[0]
+    
+                return response.status(400).json({
+                    status: 'wrong',
+                    message: error
+                })
+            } else {
+    
+                let usuario = {response : false, email:'', name: '', username: '', token: '', id: ''}
+                
+                switch(data.type){
+                    case 'go':
+                        await axios.get('https://www.googleapis.com/userinfo/v2/me', {
+                        headers: { Authorization: `Bearer ${data.token}` },
+                        }).then(response =>{
+                        usuario = {response : true, email:response.data.email != null ? response.data.email : 'Not email adress', 
+                            name: response.data.name, username: response.data.given_name, token : data.token, id:response.data.id}
+                        console.log(response)
                         })
-                    } else {
-                        newtoken.user_id = registerverify.id
-                        newtoken.session_type = data.type
-                        newtoken.token = token
-                        await newtoken.save()
+                        break;
+                    case 'fb':
+                        await axios.get(`https://graph.facebook.com/me?access_token=${data.token}`)
+                        .then(response =>{
+                        usuario = {response : true, email: response.data.email != null ? response.data.email : 'Not email adress',
+                        name: response.data.name, username: response.data.name, token : data.token, id:response.data.id}
+                        console.log(response)
+                        })
+                    break;
+                }
     
-                        return response.json({
-                            status : 'sure',
-                            token: newtoken.token,
-                            user: registerverify
+                const token = data.token
+                let newtoken = await Token.findBy('session_user_id', data.type+usuario.id)
+                const registerverify = await Socialuser.findBy('social_type', data.type+usuario.id)
+    
+                if(registerverify !== null && usuario.response == true){
+                    const banverify = await Banlist.findBy('user_id', registerverify.id)
+                    if(banverify == null){
+                        if(newtoken !== null){
+                            newtoken.user_id = registerverify.id
+                            newtoken.session_type = data.type
+                            newtoken.token = token
+                            await newtoken.save()
+        
+                            return response.json({
+                                status : 'sure',
+                                token: newtoken.token,
+                                user: registerverify
+                            })
+                        } else {
+                            newtoken.user_id = registerverify.id
+                            newtoken.session_type = data.type
+                            newtoken.token = token
+                            await newtoken.save()
+        
+                            return response.json({
+                                status : 'sure',
+                                token: newtoken.token,
+                                user: registerverify
+                            })
+                        }
+                    } else {
+                        return response.status(413).json({
+                            status : 'ban',
+                            message : `You're Banned for ${banverify.reason}`
                         })
                     }
-                } else {
-                    return response.status(413).json({
-                        status : 'ban',
-                        message : `You're Banned for ${banverify.reason}`
-                    })
-                }
-            }else{
-                switch(usuario.response){
-                    case true:
-                     const user = await new Socialuser()
-                     user.name = usuario.name
-                     user.username = data.type+usuario.id
-                     user.social_type = data.type+usuario.id
-                     await user.save()
- 
-                     newtoken = await new Token()
-                     newtoken.user_id = data.type+usuario.id
-                     newtoken.session_type = data.type
-                     newtoken.token = token
-                     await newtoken.save()
+                }else{
+                    switch(usuario.response){
+                        case true:
+                         const user = await new Socialuser()
+                         user.name = usuario.name
+                         user.username = data.type+usuario.id
+                         user.social_type = data.type+usuario.id
+                         await user.save()
+     
+                         newtoken = await new Token()
+                         newtoken.user_id = data.type+usuario.id
+                         newtoken.session_type = data.type
+                         newtoken.token = token
+                         await newtoken.save()
+    
+                         return response.json({
+                             status : 'sure',
+                             token : newtoken.token,
+                         })
+     
+                       case false:{
+                         return response.status(413).json({
+                             status : 'wrong',
+                             message: 'Token unautorized'
+                         })
+                       }
+                     }
+                } 
+            }
 
-                     return response.json({
-                         status : 'sure',
-                         token : newtoken.token,
-                     })
- 
-                   case false:{
-                     return response.status(413).json({
-                         status : 'wrong',
-                         message: 'Token unautorized'
-                     })
-                   }
-                 }
-            } 
+        } catch(error){
+            console.log(error)
         }
     }
 
